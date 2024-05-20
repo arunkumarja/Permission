@@ -75,3 +75,11 @@ class FileUpload(models.Model):
     upload_on=models.DateTimeField(auto_now_add=True)
     name=models.CharField(max_length=200)
 
+
+class BlobModel(models.Model):
+    blob = models.BinaryField() 
+    name=models.CharField(max_length=200)
+    upload_on=models.DateTimeField(auto_now_add=True)
+
+
+

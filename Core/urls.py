@@ -16,11 +16,12 @@ Including another URLconf
 """
 
 from django.urls import path
-from .views import Signup,FileUpload
+from .views import *
 
 urlpatterns = [
     path('signup/',Signup.as_view(),name='signup'),
     path('file/',FileUpload.as_view(),name='FileUplaodAPI'),
+    path('blob/',BlobModelAPI.as_view(),name='blob field')
     # path('login/',login),
 
     

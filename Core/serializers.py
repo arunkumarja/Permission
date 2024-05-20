@@ -23,3 +23,10 @@ class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model=FileUpload
         fields=['upload']    
+
+class BlobModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=BlobModel
+        fields=['blob']
+
+    
