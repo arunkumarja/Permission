@@ -31,7 +31,7 @@ class FileUpload(APIView):
 
 class BlobModelAPI(APIView):
     parser_class = (MultiPartParser, FormParser)
-    def post(self,request,format=None):
+    def post(self,request):
         file=request.FILES['file']
         file_content = file.read() 
         serializer=BlobModelSerializer(data={'blob':file_content})
