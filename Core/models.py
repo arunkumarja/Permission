@@ -20,7 +20,7 @@ class UserManager(BaseUserManager):
             is_superuser=is_superuser,
             last_login=now,
             date_joined=now,
-            required_filed=True
+            required_fileds=True
             **extra_fields
         )
         user.set_password(password)
@@ -68,3 +68,10 @@ class user_type(models.Model):
             return User.get_email(self.user) + " - is_student"
         else:
             return User.get_email(self.user) + " - is_teacher"
+
+
+class FileUpload(models.Model):
+    upload=models.FileField(upload_to='')
+    upload_on=models.DateTimeField(auto_now_add=True)
+    name=models.CharField(max_length=200)
+

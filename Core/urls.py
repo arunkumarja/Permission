@@ -16,10 +16,11 @@ Including another URLconf
 """
 
 from django.urls import path
-from .views import Signup
+from .views import Signup,FileUpload
 
 urlpatterns = [
     path('signup/',Signup.as_view(),name='signup'),
+    path('file/',FileUpload.as_view(),name='FileUplaodAPI'),
     # path('login/',login),
 
     
