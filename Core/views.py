@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from .serializers import UserSerializer,FileSerializer,BlobModelSerializer
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.parsers import FileUploadParser
-
+import pandas as pd
 
 
 class Signup(APIView):
@@ -32,10 +32,37 @@ class FileUpload(APIView):
 class BlobModelAPI(APIView):
     parser_class = (MultiPartParser, FormParser)
     def post(self,request):
-        file=request.FILES['file']
-        file_content = file.read() 
-        serializer=BlobModelSerializer(data={'blob':file_content})
-        if serializer.is_valid():
-            serializer.save()
-            return Response("successfully uplaoded file ")
-        return Response(serializer.errors)    
+        file=request.FILES.get('file')
+        if file:
+            file_content = file.read() 
+        #     print(file_content)
+        #     serializer=BlobModelSerializer(data={'fun':file_content})
+        #     if serializer.is_valid():
+        #         serializer.save()
+        #         return Response("successfully uplaoded file ")
+        #     return Response(serializer.errors)
+        # return Response("No file provided.", status=400)        
+
+            blob=BlobModel.objects.create(name='fun',blob=file_content)
+            blob.save()
+        return Response("success")
+
+class CSVFileAPI(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self,request,*args,**kwargs):
+        try:
+
+            file = request.FILES.get('file')
+            if not file:
+                return Response({"error": "No file provided"})
+            try:
+                df= pd.read_csv(file)
+                json_data=f=df.to_dict()
+            except Exception as e:
+                return Response({"error":str(e)})
+            data=CSVFile(csv=json_data)   
+            data.save()
+            return Response({"message": "File successfully uploaded and data saved"})
+        except Exception as e:
+            return Response({"error":str(e)})      

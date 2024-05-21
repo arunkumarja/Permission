@@ -82,4 +82,10 @@ class BlobModel(models.Model):
     upload_on=models.DateTimeField(auto_now_add=True)
 
 
+class CSVFile(models.Model):
+    csv=models.JSONField()
+    name=models.CharField(max_length=100)
+    
+
+
 

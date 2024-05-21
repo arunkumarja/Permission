@@ -29,4 +29,9 @@ class BlobModelSerializer(serializers.ModelSerializer):
         model=BlobModel
         fields=['blob']
 
+class CSVFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=CSVFile
+        fields=['csv']        
+
     
