@@ -20,7 +20,7 @@ from .views import *
 
 urlpatterns = [
     path('signup/',Signup.as_view(),name='signup'),
-    path('file/',FileUpload.as_view(),name='FileUplaodAPI'),
+    path('file/',FileUploadAPI.as_view(),name='FileUplaodAPI'),
     path('blob/',BlobModelAPI.as_view(),name='blob field'),
     path('csv/',CSVFileAPI.as_view(),name='csvfile'),
     

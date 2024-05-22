@@ -17,7 +17,7 @@ class Signup(APIView):
         return JsonResponse({"message":serializer.data})  
         
 
-class FileUpload(APIView):
+class FileUploadAPI(APIView):
     parser_class = (FileUploadParser,)
 
     def post(self, request, *args, **kwargs):
@@ -26,43 +26,62 @@ class FileUpload(APIView):
             file_serializer.save()
             return Response(file_serializer.data, status=201)
         else:
-            return Response(file_serializer.errors, status=400)   
+            return Response(file_serializer.errors, status=400)  
 
-
+    def get(self,request):
+        query=request.query_params.get('id')
+        file=FileUpload.objects.get(id=query)
+        data=file.upload
+        return Response({"data":data})
 class BlobModelAPI(APIView):
     parser_class = (MultiPartParser, FormParser)
     def post(self,request):
         file=request.FILES.get('file')
         if file:
-            file_content = file.read() 
-        #     print(file_content)
-        #     serializer=BlobModelSerializer(data={'fun':file_content})
-        #     if serializer.is_valid():
-        #         serializer.save()
-        #         return Response("successfully uplaoded file ")
-        #     return Response(serializer.errors)
-        # return Response("No file provided.", status=400)        
-
+            file_content = file.read()        
             blob=BlobModel.objects.create(name='fun',blob=file_content)
             blob.save()
         return Response("success")
+
+    def get(self,request):
+        query=request.query_params.get('id') 
+        blob=BlobModel.objects.get(id=query)
+        data=blob.blob
+        return Response({"blob data":data})  
+
 
 class CSVFileAPI(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self,request,*args,**kwargs):
         try:
-
             file = request.FILES.get('file')
+            print(file)
             if not file:
                 return Response({"error": "No file provided"})
             try:
-                df= pd.read_csv(file)
-                json_data=f=df.to_dict()
+                # df= pd.read_csv(file,encoding='latin1')
+                json_data=df.to_dict(orient='records')
             except Exception as e:
                 return Response({"error":str(e)})
+            # df = pd.read_csv(file, encoding='latin1')    
             data=CSVFile(csv=json_data)   
             data.save()
             return Response({"message": "File successfully uploaded and data saved"})
         except Exception as e:
             return Response({"error":str(e)})      
+
+    def get(self,request):
+        query=request.query_params.get('id') 
+        csv_data=CSVFile.objects.get(id=query)
+        instance=csv_data.csv 
+        a=[]  
+        for i in instance:
+            total=i['maths']+i['tamil']+i['social']+i['english']+i['science']
+            i['total']=total 
+            x=i['total']
+            a.append(x)
+        sorted_totals = sorted(a, reverse=True)
+        for student in instance:
+            student['rank'] = sorted_totals.index(student['total']) +1
+        return Response(instance)  
