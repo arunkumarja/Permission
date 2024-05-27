@@ -7,6 +7,7 @@ from .serializers import UserSerializer,FileSerializer,BlobModelSerializer
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.parsers import FileUploadParser
 import pandas as pd
+from io import StringIO
 
 
 class Signup(APIView):
@@ -71,17 +72,61 @@ class CSVFileAPI(APIView):
         except Exception as e:
             return Response({"error":str(e)})      
 
-    def get(self,request):
-        query=request.query_params.get('id') 
-        csv_data=CSVFile.objects.get(id=query)
-        instance=csv_data.csv 
-        a=[]  
-        for i in instance:
-            total=i['maths']+i['tamil']+i['social']+i['english']+i['science']
-            i['total']=total 
-            x=i['total']
-            a.append(x)
-        sorted_totals = sorted(a, reverse=True)
-        for student in instance:
-            student['rank'] = sorted_totals.index(student['total']) +1
-        return Response(instance)  
+    # def get(self,request):
+    #     query=request.query_params.get('id') 
+    #     csv_data=CSVFile.objects.get(id=query)
+    #     instance=csv_data.csv 
+    #     a=[]  
+    #     for i in instance:
+    #         total=i['maths']+i['tamil']+i['social']+i['english']+i['science']
+    #         i['total']=total 
+    #         x=i['total']
+    #         a.append(x)
+    #     sorted_totals = sorted(a, reverse=True)
+    #     for student in instance:
+    #         if student['maths']<35 or student['tamil']<35 or student['social']<35 or student['english']<35 or student['science']<35 :
+    #             student['rank']='Fail'
+    #         else:
+    #             student['rank'] = sorted_totals.index(student['total']) +1
+    #     return Response(instance) 
+     
+
+
+    def get(self, request, *args, **kwargs):
+        # Get the ID from query parameters
+        query_id = request.query_params.get('id')
+        
+        # Fetch the CSV data from the database
+        csv_data = CSVFile.objects.get(id=query_id)
+        instance = csv_data.csv
+        
+        # Use Pandas to read the CSV data
+        df = pd.DataFrame(instance)
+        # Calculate the total scores for each student
+        df['total'] = df[['maths', 'tamil', 'social', 'english', 'science']].sum(axis=1)
+
+        print(df)
+        
+        # Determine if a student has failed in any subject
+        df['rank'] = df.apply(
+            lambda row: 'Fail' if any(row[subject] < 35 for subject in ['maths', 'tamil', 'social', 'english', 'science']) else None,
+            axis=1
+        )
+        
+        # Filter out the students who have not failed
+        df_not_failed = df[df['rank'] != 'Fail']
+        
+        # Sort the students who have not failed by their total scores in descending order
+        df_not_failed = df_not_failed.sort_values(by='total', ascending=False)
+        
+        # Assign ranks to the students who have not failed
+        df_not_failed['rank'] = range(1, len(df_not_failed) + 1)
+        
+        # Merge the ranks back into the original DataFrame
+        df.update(df_not_failed['rank'])
+        print(df_not_failed['rank'])
+        
+        # Convert the DataFrame back to a list of dictionaries
+        students = df.to_dict(orient='records')
+        
+        return Response(students)
