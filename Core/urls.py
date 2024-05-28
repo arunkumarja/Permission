@@ -23,6 +23,7 @@ urlpatterns = [
     path('file/',FileUploadAPI.as_view(),name='FileUplaodAPI'),
     path('blob/',BlobModelAPI.as_view(),name='blob field'),
     path('csv/',CSVFileAPI.as_view(),name='csvfile'),
+    path('',test)
     
 
     

@@ -8,6 +8,8 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.parsers import FileUploadParser
 import pandas as pd
 from io import StringIO
+from .tasks import test_fun
+from django.http import HttpResponse
 
 
 class Signup(APIView):
@@ -99,34 +101,23 @@ class CSVFileAPI(APIView):
         # Fetch the CSV data from the database
         csv_data = CSVFile.objects.get(id=query_id)
         instance = csv_data.csv
-        
-        # Use Pandas to read the CSV data
         df = pd.DataFrame(instance)
         # Calculate the total scores for each student
-        df['total'] = df[['maths', 'tamil', 'social', 'english', 'science']].sum(axis=1)
-
-        print(df)
-        
+        df['total'] = df[['maths', 'tamil', 'social', 'english', 'science']].sum(axis=1) 
         # Determine if a student has failed in any subject
         df['rank'] = df.apply(
             lambda row: 'Fail' if any(row[subject] < 35 for subject in ['maths', 'tamil', 'social', 'english', 'science']) else None,
             axis=1
         )
-        
-        # Filter out the students who have not failed
         df_not_failed = df[df['rank'] != 'Fail']
-        
-        # Sort the students who have not failed by their total scores in descending order
         df_not_failed = df_not_failed.sort_values(by='total', ascending=False)
-        
-        # Assign ranks to the students who have not failed
         df_not_failed['rank'] = range(1, len(df_not_failed) + 1)
-        
-        # Merge the ranks back into the original DataFrame
         df.update(df_not_failed['rank'])
-        print(df_not_failed['rank'])
-        
-        # Convert the DataFrame back to a list of dictionaries
         students = df.to_dict(orient='records')
         
         return Response(students)
+
+
+def test(self):
+    test_fun.delay()
+    return HttpResponse("Done")
