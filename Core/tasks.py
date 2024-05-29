@@ -2,8 +2,8 @@ from celery import shared_task
 
 
 @shared_task(bind=True)
-def test_fun(self):
-    for i in range(10):
-        print(i)
+def add(x,y):
+    z=4+4
+    return z
 
-    return "Done"
+    # return "Done"

@@ -8,8 +8,10 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.parsers import FileUploadParser
 import pandas as pd
 from io import StringIO
-from .tasks import test_fun
+from .tasks import *
 from django.http import HttpResponse
+from sent_mail_app.tasks import send_mail_func
+from celery.schedules import crontab
 
 
 class Signup(APIView):
@@ -118,6 +120,17 @@ class CSVFileAPI(APIView):
         return Response(students)
 
 
-def test(self):
-    test_fun.delay()
+def test(request):
+    add.delay(10)
+    return HttpResponse("Done")
+
+def send_mail_to_all(request):
+    send_mail_func.delay()
+    return HttpResponse("sent")
+
+from django_celery_beat.models import PeriodicTask, CrontabSchedule
+import json
+def schedule_mail(request):
+    schedule, created = CrontabSchedule.objects.get_or_create(hour =15, minute = 6)
+    task = PeriodicTask.objects.create(crontab=schedule, name="schedule_mail_task_"+"11", task='sent_mail_app.tasks.send_mail_func')
     return HttpResponse("Done")

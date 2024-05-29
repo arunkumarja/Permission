@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'Core',
     'rest_framework',
     'django_celery_results',
-    'django_celery_beat',  
+    'django_celery_beat', 
+    'sent_mail_app', 
 ]
 
 AUTH_USER_MODEL='Core.User'
@@ -159,3 +160,17 @@ CELERY_RESULT_BACKEND='django-db'
 #CELERY BEAT SETTINGS
 
 CELERY_BEAT_SCHEDULER='django_celery_beat.schedulers:DatabaseScheduler'
+
+
+# SMPT SETTINGS
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER ='tsarun816@gmail.com'
+EMAIL_HOST_PASSWORD = "eqri nzwn uibj xywa"
+DEFAULT_FROM_EMAIL = 'Celery <tsarun816@gmail.com>'
+
+
+
+# eqri nzwn uibj xywa

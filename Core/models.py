@@ -20,7 +20,6 @@ class UserManager(BaseUserManager):
             is_superuser=is_superuser,
             last_login=now,
             date_joined=now,
-            required_fileds=True
             **extra_fields
         )
         user.set_password(password)
@@ -47,7 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = [True]
+    REQUIRED_FIELDS = []
 
     objects = UserManager()
 
@@ -85,7 +84,7 @@ class BlobModel(models.Model):
 class CSVFile(models.Model):
     csv=models.JSONField()
     name=models.CharField(max_length=100)
-    
+
 
 
 

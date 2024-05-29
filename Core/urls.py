@@ -23,7 +23,12 @@ urlpatterns = [
     path('file/',FileUploadAPI.as_view(),name='FileUplaodAPI'),
     path('blob/',BlobModelAPI.as_view(),name='blob field'),
     path('csv/',CSVFileAPI.as_view(),name='csvfile'),
-    path('',test)
+    path('test/',test,name='test'),
+    path('send/',send_mail_to_all,name='send_mail_func'),
+    path('schedule/',schedule_mail,name='schedule_mail'),
+
+
+
     
 
     
