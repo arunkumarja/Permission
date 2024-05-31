@@ -10,7 +10,7 @@ import pandas as pd
 from io import StringIO
 from .tasks import *
 from django.http import HttpResponse
-from sent_mail_app.tasks import send_mail_func
+from sent_mail_app.tasks import send_mail_func,bday_fun
 from celery.schedules import crontab
 
 
@@ -130,7 +130,20 @@ def send_mail_to_all(request):
 
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
 import json
+from datetime import timedelta
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
+from .models import Students
+
 def schedule_mail(request):
-    schedule, created = CrontabSchedule.objects.get_or_create(hour =15, minute = 6)
-    task = PeriodicTask.objects.create(crontab=schedule, name="schedule_mail_task_"+"11", task='sent_mail_app.tasks.send_mail_func')
+    schedule, created = CrontabSchedule.objects.get_or_create(hour = 11, minute = 57)
+    task = PeriodicTask.objects.create(crontab=schedule, name="schedule_mail_tasks_3", task='sent_mail_app.tasks.send_mail_func')#, args = json.dumps([[2,3]]))
     return HttpResponse("Done")
+
+
+def bday_mail(request):
+    schedule, created = CrontabSchedule.objects.get_or_create(hour =10, minute = 4)
+    task = PeriodicTask.objects.create(crontab=schedule, name="schdule_0mal8as_"+"13", task='sent_mail_app.tasks.bday_fun')
+    return HttpResponse("Done")
+
+

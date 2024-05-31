@@ -20,6 +20,7 @@ class UserManager(BaseUserManager):
             is_superuser=is_superuser,
             last_login=now,
             date_joined=now,
+
             **extra_fields
         )
         user.set_password(password)
@@ -43,6 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     last_login = models.DateTimeField(null=True, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
+    birth_day = models.DateTimeField(null=True)
 
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
@@ -85,6 +87,10 @@ class CSVFile(models.Model):
     csv=models.JSONField()
     name=models.CharField(max_length=100)
 
-
-
-
+    
+class Students(models.Model):
+    name=models.CharField(max_length=200)
+    age=models.IntegerField()
+    DOB=models.DateField(null=True)
+    DEPT=models.CharField(max_length=20)
+    email = models.EmailField(max_length=254, unique=True,null=True)

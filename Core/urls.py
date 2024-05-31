@@ -26,6 +26,8 @@ urlpatterns = [
     path('test/',test,name='test'),
     path('send/',send_mail_to_all,name='send_mail_func'),
     path('schedule/',schedule_mail,name='schedule_mail'),
+    path('bday/',bday_fun,name='schedule_file'),
+    # path('upload/', FileUploadView.as_view(), name='file-upload'),
 
 
 
